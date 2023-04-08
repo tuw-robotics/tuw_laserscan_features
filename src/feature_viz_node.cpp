@@ -26,22 +26,31 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include <memory>
-#include "gtest/gtest.h"
+
+#include "tuw_laserscan_features/feature_viz_node.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "tuw_laserscan_features/linedetection_node.hpp"
 
-TEST(SubsciberMultiply, TestIntegerOne_One)
+using std::placeholders::_1;
+using namespace tuw;
+
+FeatureVizNode::FeatureVizNode(rclcpp::NodeOptions options)
+: Node("debug_laser_features", options)
 {
-  auto node = std::make_shared<tuw::LineDetectionNode>(rclcpp::NodeOptions());
-  const auto expected = 11;
-  const auto actual = node->multiply(3, 4);
-  ASSERT_EQ(expected, actual);
+
+  sub_line_segments_ = create_subscription<tuw_geometry_msgs::msg::LineSegments>(
+        "line_segments",
+        10, std::bind(&FeatureVizNode::callback_line_segments, this, _1));
+    RCLCPP_INFO(this->get_logger(), "subscribed to line_segments");
+
+    
 }
 
-int main(int argc, char ** argv)
+void FeatureVizNode::callback_line_segments(const tuw_geometry_msgs::msg::LineSegments::SharedPtr msg)
 {
-  rclcpp::init(argc, argv);
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+    RCLCPP_INFO(this->get_logger(), "callback_line_segments");
+    (void) msg;
 }
+
+#include "rclcpp_components/register_node_macro.hpp"
+
+RCLCPP_COMPONENTS_REGISTER_NODE(tuw::FeatureVizNode)

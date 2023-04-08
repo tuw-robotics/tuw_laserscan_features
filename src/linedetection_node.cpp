@@ -28,26 +28,56 @@
 
 
 #include "tuw_laserscan_features/linedetection_node.hpp"
+#include "tuw_laserscan_features/linedetection_parameter.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
+#include <tuw_geometry/linesegment2d_detector.hpp>
 
 using std::placeholders::_1;
+using namespace tuw;
 
 LineDetectionNode::LineDetectionNode(rclcpp::NodeOptions options)
 : Node("laserscan_linedetection", options)
 {
+  detector_ = std::make_shared<tuw::LineSegment2DDetector>();
+  param_ = std::make_shared<tuw::LineDetectionParameter>(*this);
+  param_->declare_parameters();
+
   sub_laser_ = create_subscription<sensor_msgs::msg::LaserScan>(
         "scan",
         10, std::bind(&LineDetectionNode::callback_laser, this, _1));
     RCLCPP_INFO(this->get_logger(), "subscribed to scan");
+
+  pub_linesegments_ = this->create_publisher<tuw_geometry_msgs::msg::LineSegments>("line_segments", 10);
+    
 }
 
-void LineDetectionNode::callback_laser(const sensor_msgs::msg::LaserScan::SharedPtr msg)
+void LineDetectionNode::callback_laser(const sensor_msgs::msg::LaserScan::SharedPtr msg_laserscan)
 {
+    detector_->config_ = *param_;
     RCLCPP_INFO(this->get_logger(), "callback_laser");
-    (void)msg;
+    std::vector<Point2D> points;  /// laser measurments in cartesian robot coordinates
+    std::vector<LineSegment2D> detected_segments;
+
+    points.resize(msg_laserscan->ranges.size());
+    for ( size_t i = 0; i < msg_laserscan->ranges.size(); i++ ) {
+      double angle = msg_laserscan->angle_min + msg_laserscan->angle_increment * i;
+      points[i].set(cos ( angle ) * msg_laserscan->ranges[i], sin ( angle ) * msg_laserscan->ranges[i]);
+    }
+    detector_->start(points,detected_segments);
+
+    tuw_geometry_msgs::msg::LineSegments msg_line_segments;
+    msg_line_segments.segments.resize(detected_segments.size());
+    for(size_t i = 0; i < detected_segments.size(); i++){
+      tuw_geometry_msgs::msg::LineSegment &des =  msg_line_segments.segments[i];
+      LineSegment2D &src =  detected_segments[i];
+      des.p0.x = src.x0(), des.p0.y = src.y0(), des.p0.z = 0. ;
+      des.p1.x = src.x1(), des.p1.y = src.y1(), des.p1.z = 0. ;
+    }
+    msg_line_segments.header = msg_laserscan->header;
+    pub_linesegments_->publish(msg_line_segments);
 }
 
 #include "rclcpp_components/register_node_macro.hpp"
 
-RCLCPP_COMPONENTS_REGISTER_NODE(LineDetectionNode)
+RCLCPP_COMPONENTS_REGISTER_NODE(tuw::LineDetectionNode)

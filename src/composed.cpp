@@ -7,7 +7,7 @@ int main(int argc, char * argv[])
   rclcpp::init(argc, argv);
   rclcpp::executors::SingleThreadedExecutor exec;
   rclcpp::NodeOptions options;
-  auto subscriber_node = std::make_shared<LineDetectionNode>(options);
+  auto subscriber_node = std::make_shared<tuw::LineDetectionNode>(options);
   exec.add_node(subscriber_node);
   exec.spin();
   rclcpp::shutdown();
