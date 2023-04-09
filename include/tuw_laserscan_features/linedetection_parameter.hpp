@@ -56,8 +56,7 @@ private:
 
     rclcpp::Node &n_;                                     /// reference to parent node
     rclcpp::TimerBase::SharedPtr timer_update_parameter_; /// timer to check regularly for parameter changes
-    unsigned int parameter_update_cycle_;                 /// parameter defining the update time on check for parameter changes
-};
+ };
 /// some useful prototypes
 using LineDetectionNodeParameterPtr = std::shared_ptr<LineDetectionParameter>;
 using LineDetectionNodeParameterConstPtr = std::shared_ptr<LineDetectionParameter const>;

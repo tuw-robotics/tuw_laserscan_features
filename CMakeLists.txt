@@ -17,6 +17,7 @@ find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(tuw_geometry_msgs REQUIRED)
 find_package(tuw_geometry REQUIRED)
+find_package(OpenCV REQUIRED)
 
 include_directories(include)
 
@@ -32,7 +33,8 @@ add_library(linedetection_node SHARED
             src/linedetection_node.cpp src/linedetection_parameter.cpp)
 target_compile_definitions(linedetection_node
   PRIVATE "TUW2_EXAMPLE_PACKAGE_DLL")
-ament_target_dependencies(linedetection_node rclcpp rclcpp_components std_msgs sensor_msgs tuw_geometry_msgs tuw_geometry)
+ament_target_dependencies(linedetection_node rclcpp rclcpp_components std_msgs sensor_msgs tuw_geometry_msgs tuw_geometry
+)
 
 
 add_executable(linedetection src/standalone_linedetection.cpp)
@@ -41,10 +43,10 @@ ament_target_dependencies(linedetection
   rclcpp)
 
 add_library(feature_viz_node SHARED
-            src/feature_viz_node.cpp)
+            src/feature_viz_node.cpp src/feature_viz_parameter.cpp)
 target_compile_definitions(feature_viz_node
   PRIVATE "TUW2_EXAMPLE_PACKAGE_DLL")
-ament_target_dependencies(feature_viz_node rclcpp rclcpp_components std_msgs sensor_msgs tuw_geometry_msgs tuw_geometry)
+ament_target_dependencies(feature_viz_node rclcpp rclcpp_components std_msgs sensor_msgs tuw_geometry_msgs tuw_geometry OpenCV)
 
 add_executable(feature_viz src/standalone_feature_viz.cpp)
 target_link_libraries(feature_viz feature_viz_node)
