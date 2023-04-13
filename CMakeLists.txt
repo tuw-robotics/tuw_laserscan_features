@@ -53,9 +53,9 @@ target_link_libraries(feature_viz feature_viz_node)
 ament_target_dependencies(feature_viz
   rclcpp)
 
-add_executable(composed src/composed.cpp)
-target_link_libraries(composed linedetection_node feature_viz_node)
-ament_target_dependencies(composed rclcpp class_loader)
+add_executable(laserscan_features src/composed.cpp)
+target_link_libraries(laserscan_features linedetection_node feature_viz_node)
+ament_target_dependencies(laserscan_features rclcpp class_loader)
 
 install(TARGETS
   linedetection_node
@@ -65,7 +65,7 @@ install(TARGETS
   RUNTIME DESTINATION bin)
 
 install(TARGETS
-  composed
+  laserscan_features
   linedetection
   feature_viz
   DESTINATION lib/${PROJECT_NAME})

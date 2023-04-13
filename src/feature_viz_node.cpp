@@ -49,7 +49,7 @@ FeatureVizNode::FeatureVizNode(rclcpp::NodeOptions options)
     figure_->init(param_->map_width, param_->map_height,
                   param_->map_min_x, param_->map_max_x,
                   param_->map_min_y, param_->map_max_y,
-                  param_->map_rotation + M_PI,
+                  param_->map_rotation + M_PI_2,
                   param_->map_grid_x, param_->map_grid_y);
 
     sub_line_segments_ = create_subscription<tuw_geometry_msgs::msg::LineSegments>(
@@ -69,7 +69,13 @@ FeatureVizNode::FeatureVizNode(rclcpp::NodeOptions options)
 
 void FeatureVizNode::on_timer()
 {
+    figure_->init(param_->map_width, param_->map_height,
+                  param_->map_min_x, param_->map_max_x,
+                  param_->map_min_y, param_->map_max_y,
+                  param_->map_rotation + M_PI_2,
+                  param_->map_grid_x, param_->map_grid_y);
     figure_->clear();
+
     for (size_t i = 0; i < msg_laser_scan_.ranges.size(); i++)
     {
         double angle = msg_laser_scan_.angle_min + msg_laser_scan_.angle_increment * i;
