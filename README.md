@@ -1,4 +1,4 @@
-# tuw_laserscan_features
+# tuw_laserscan_features for ROS2
 Feature extractor for laserscan message such as lines and line segments
 
 ![](res/linedetection_and_stage.png)
