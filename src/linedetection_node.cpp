@@ -54,8 +54,8 @@ LineDetectionNode::LineDetectionNode(rclcpp::NodeOptions options)
 
 void LineDetectionNode::callback_laser(const sensor_msgs::msg::LaserScan::SharedPtr msg_laserscan)
 {
+    //RCLCPP_INFO(this->get_logger(), "callback_laser");
     detector_->config_ = *param_;
-    RCLCPP_INFO(this->get_logger(), "callback_laser");
     std::vector<Point2D> points;  /// laser measurments in cartesian robot coordinates
     std::vector<LineSegment2D> detected_segments;
 
